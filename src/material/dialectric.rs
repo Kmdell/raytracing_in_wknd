@@ -48,7 +48,7 @@ impl Material for Dialectric {
             unit_direction.refract(&record.normal, ri)
         };
 
-        *scattered = Ray::new(&record.p, &direction);
+        *scattered = Ray::new(&record.p, &direction, ray_in.time());
 
         true
     }

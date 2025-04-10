@@ -29,9 +29,18 @@ impl HittableObject {
         }
     }
 
-    pub fn sphere(center: Point3, radius: f32, mat: MaterialType) -> HittableObject {
-        let sphere = Sphere::new(center, radius, mat);
+    pub fn stationary_sphere(center: Point3, radius: f32, mat: MaterialType) -> HittableObject {
+        let sphere = Sphere::new_stationary(center, radius, mat);
         HittableObject::Sphere(sphere)
+    }
+
+    pub fn moving_sphere(
+        center1: Point3,
+        center2: Point3,
+        radius: f32,
+        mat: MaterialType,
+    ) -> HittableObject {
+        HittableObject::Sphere(Sphere::new_moving(center1, center2, radius, mat))
     }
 }
 

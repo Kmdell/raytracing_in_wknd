@@ -78,7 +78,7 @@ fn main() {
     */
 
     let ground_material = MaterialType::lambertion(Color::new(0.5, 0.5, 0.5));
-    world.add(HittableObject::sphere(
+    world.add(HittableObject::stationary_sphere(
         Point3::new(0.0, -1000.0, 0.0),
         1000.0,
         ground_material,
@@ -98,38 +98,52 @@ fn main() {
                     // Diffuse
                     let albedo = Color::random() * Color::random();
                     let sphere_material = MaterialType::lambertion(albedo);
-                    world.add(HittableObject::sphere(center, 0.2, sphere_material));
+                    let center2 = center + Vec3::new(0.0, random_float_clamp(0.0, 0.5), 0.0);
+                    world.add(HittableObject::moving_sphere(
+                        center,
+                        center2,
+                        0.2,
+                        sphere_material,
+                    ));
                 } else if choose_mat < 0.95 {
                     // Metal
                     let albedo = Color::random_clamp(0.5, 1.0);
                     let fuzz = random_float_clamp(0.0, 0.5);
                     let sphere_material = MaterialType::metal(albedo, fuzz);
-                    world.add(HittableObject::sphere(center, 0.2, sphere_material));
+                    world.add(HittableObject::stationary_sphere(
+                        center,
+                        0.2,
+                        sphere_material,
+                    ));
                 } else {
                     // Glass
                     let sphere_material = MaterialType::dialectric(1.5);
-                    world.add(HittableObject::sphere(center, 0.2, sphere_material));
+                    world.add(HittableObject::stationary_sphere(
+                        center,
+                        0.2,
+                        sphere_material,
+                    ));
                 }
             }
         }
     }
 
     let material1 = MaterialType::dialectric(1.5);
-    world.add(HittableObject::sphere(
+    world.add(HittableObject::stationary_sphere(
         Point3::new(0.0, 1.0, 0.0),
         1.0,
         material1,
     ));
 
     let material2 = MaterialType::lambertion(Color::new(0.4, 0.2, 0.1));
-    world.add(HittableObject::sphere(
+    world.add(HittableObject::stationary_sphere(
         Point3::new(-4.0, 1.0, 0.0),
         1.0,
         material2,
     ));
 
     let material3 = MaterialType::metal(Color::new(0.7, 0.6, 0.5), 0.0);
-    world.add(HittableObject::sphere(
+    world.add(HittableObject::stationary_sphere(
         Point3::new(4.0, 1.0, 0.0),
         1.0,
         material3,
@@ -137,8 +151,8 @@ fn main() {
 
     let mut camera = Camera::default();
     camera.aspect_ratio = 16.0 / 9.0;
-    camera.image_width = 1800;
-    camera.samples_per_pixel = 500;
+    camera.image_width = 400;
+    camera.samples_per_pixel = 100;
     camera.max_depth = 50;
 
     camera.vfov = 20.0;

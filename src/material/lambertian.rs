@@ -27,7 +27,7 @@ impl Material for Lambertion {
             scatter_direction = record.normal;
         }
 
-        *scattered = Ray::new(&record.p, &scatter_direction);
+        *scattered = Ray::new(&record.p, &scatter_direction, ray_in.time());
         *attenuation = self.albedo;
         true
     }

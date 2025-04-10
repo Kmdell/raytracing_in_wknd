@@ -9,17 +9,25 @@ use crate::{
 };
 
 pub struct Sphere {
-    center: Point3,
+    center: Ray,
     radius: f32,
     mat: Arc<MaterialType>,
 }
 
 impl Sphere {
-    pub fn new(center: Point3, radius: f32, mat: MaterialType) -> Self {
+    pub fn new_stationary(center: Point3, radius: f32, mat: MaterialType) -> Self {
         let radius = radius.max(0.0);
         // TODO: Initialize material pointer `mat`
         Self {
-            center,
+            center: Ray::new(&center, &Vec3::default(), 0.0),
+            radius,
+            mat: Arc::new(mat),
+        }
+    }
+
+    pub fn new_moving(center1: Point3, center2: Point3, radius: f32, mat: MaterialType) -> Self {
+        Self {
+            center: Ray::new(&center1, &(center2 - center1), 0.0),
             radius,
             mat: Arc::new(mat),
         }
@@ -28,7 +36,8 @@ impl Sphere {
 
 impl Hittable for Sphere {
     fn hit(&self, ray: &Ray, ray_t: &Interval, hit_record: &mut HitRecord) -> bool {
-        let oc: Vec3 = self.center - ray.origin();
+        let current_center = self.center.at(ray.time());
+        let oc: Vec3 = current_center - ray.origin();
         let a = ray.direction().length_squared();
         let h = ray.direction().dot(&oc);
         let c = oc.length_squared() - self.radius * self.radius;
@@ -51,7 +60,7 @@ impl Hittable for Sphere {
 
         hit_record.t = root;
         hit_record.p = ray.at(hit_record.t);
-        let outward_normal = (hit_record.p - self.center) / self.radius;
+        let outward_normal = (hit_record.p - current_center) / self.radius;
         hit_record.set_face_normal(ray, &outward_normal);
         hit_record.mat = self.mat.clone();
 
