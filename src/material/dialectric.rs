@@ -1,7 +1,8 @@
-use crate::{color::Color, hittable::HitRecord, ray::Ray, rtweekend::random_float};
+use crate::{color::Color, hittable::HitRecord, ray::Ray, utility::random_float};
 
 use super::Material;
 
+#[derive(Clone)]
 pub struct Dialectric {
     // Refractive index in vacuum or air, or the ratio of the material's refractive index over
     // the refractive index of the enclosing media

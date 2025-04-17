@@ -6,7 +6,7 @@ const NEAR_ZERO: f32 = 1e-8;
 pub type Point3 = Vec3;
 
 #[repr(transparent)]
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct Vec3 {
     pub e: [f32; 3],
 }

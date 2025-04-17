@@ -2,11 +2,12 @@ use dialectric::Dialectric;
 use lambertian::Lambertion;
 use metal::Metal;
 
-use crate::{color::Color, hittable::HitRecord, ray::Ray};
+use crate::{color::Color, hittable::HitRecord, ray::Ray, texture::TextureType};
 pub mod dialectric;
 pub mod lambertian;
 pub mod metal;
 
+#[derive(Clone)]
 pub enum MaterialType {
     None,
     Lambertian(Lambertion),
@@ -19,8 +20,8 @@ impl MaterialType {
         MaterialType::Metal(Metal::new(albedo, fuzz))
     }
 
-    pub fn lambertion(albedo: Color) -> MaterialType {
-        MaterialType::Lambertian(Lambertion::new(albedo))
+    pub fn lambertion(tex: TextureType) -> MaterialType {
+        MaterialType::Lambertian(Lambertion::new(tex))
     }
 
     pub fn dialectric(refractive_index: f32) -> MaterialType {

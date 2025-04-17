@@ -7,7 +7,7 @@ use crate::{
     color::Color,
     hittable::Hittable,
     ray::Ray,
-    rtweekend::{degree_to_radians, random_float},
+    utility::{degree_to_radians, random_float},
     vec3::{Point3, Vec3},
 };
 

@@ -4,12 +4,12 @@ use std::{
     simd::{cmp::SimdPartialOrd, num::SimdFloat, Simd},
 };
 
-use crate::rtweekend::{random_float, random_float_clamp};
+use crate::utility::{random_float, random_float_clamp};
 
 pub type Point3 = Vec3;
 
 #[repr(transparent)]
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct Vec3 {
     e: Simd<f32, 3>,
 }

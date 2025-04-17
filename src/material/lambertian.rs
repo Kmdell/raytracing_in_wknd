@@ -1,14 +1,27 @@
-use crate::{color::Color, hittable::HitRecord, ray::Ray, vec3::Vec3};
+use crate::{color::Color, hittable::HitRecord, ray::Ray, texture::TextureType, vec3::Vec3};
 
 use super::Material;
 
+#[derive(Clone)]
 pub struct Lambertion {
-    pub albedo: Color,
+    pub tex: TextureType,
 }
 
 impl Lambertion {
-    pub fn new(albedo: Color) -> Self {
-        Self { albedo }
+    pub fn new(tex: TextureType) -> Self {
+        Self { tex }
+    }
+}
+
+impl From<Color> for Lambertion {
+    fn from(value: Color) -> Self {
+        Self::new(TextureType::solid_color(&value))
+    }
+}
+
+impl From<&Color> for Lambertion {
+    fn from(value: &Color) -> Self {
+        Self::new(TextureType::solid_color(value))
     }
 }
 
@@ -28,7 +41,7 @@ impl Material for Lambertion {
         }
 
         *scattered = Ray::new(&record.p, &scatter_direction, ray_in.time());
-        *attenuation = self.albedo;
+        *attenuation = self.tex.value(record.u, record.v, &record.p);
         true
     }
 }

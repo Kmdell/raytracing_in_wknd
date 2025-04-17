@@ -22,7 +22,7 @@ impl Color {
         let g = self.y();
         let b = self.z();
 
-        // Apply a linear to gamma transform for gama 2
+        // Apply a linear to gamma transform for gamma 2
         let r = Color::linear_to_gamma(r);
         let g = Color::linear_to_gamma(g);
         let b = Color::linear_to_gamma(b);

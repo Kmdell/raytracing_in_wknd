@@ -1,13 +1,16 @@
 use std::sync::Arc;
 
 use crate::{
+    aabb::Aabb,
     interval::Interval,
     material::MaterialType,
     ray::Ray,
     vec3::{Point3, Vec3},
 };
+pub mod bvh_node;
 pub mod hittable_list;
 pub mod sphere;
+use bvh_node::BvhNode;
 pub use sphere::Sphere;
 
 pub struct HitRecord {
@@ -15,23 +18,34 @@ pub struct HitRecord {
     pub normal: Vec3,
     pub mat: Arc<MaterialType>,
     pub t: f32,
+    pub u: f32,
+    pub v: f32,
     pub front_face: bool,
 }
 
+#[derive(Clone)]
 pub enum HittableObject {
     Sphere(Sphere),
+    BvhNode(BvhNode),
 }
 
 impl HittableObject {
     pub fn hit(&self, ray: &Ray, ray_t: &Interval, hit_record: &mut HitRecord) -> bool {
         match self {
             HittableObject::Sphere(sphere) => sphere.hit(ray, ray_t, hit_record),
+            HittableObject::BvhNode(bvh_node) => bvh_node.hit(ray, ray_t, hit_record),
+        }
+    }
+
+    pub fn bounding_box(&self) -> &Aabb {
+        match self {
+            HittableObject::Sphere(sphere) => sphere.bounding_box(),
+            HittableObject::BvhNode(bvh_node) => bvh_node.bounding_box(),
         }
     }
 
     pub fn stationary_sphere(center: Point3, radius: f32, mat: MaterialType) -> HittableObject {
-        let sphere = Sphere::new_stationary(center, radius, mat);
-        HittableObject::Sphere(sphere)
+        HittableObject::Sphere(Sphere::new_stationary(center, radius, mat))
     }
 
     pub fn moving_sphere(
@@ -41,6 +55,10 @@ impl HittableObject {
         mat: MaterialType,
     ) -> HittableObject {
         HittableObject::Sphere(Sphere::new_moving(center1, center2, radius, mat))
+    }
+
+    pub fn bvh_node(objects: &mut [HittableObject]) -> HittableObject {
+        HittableObject::BvhNode(BvhNode::new(objects))
     }
 }
 
@@ -64,6 +82,8 @@ impl Default for HitRecord {
             normal: Vec3::default(),
             mat: Arc::new(MaterialType::None),
             t: 0.0,
+            u: 0.0,
+            v: 0.0,
             front_face: false,
         }
     }
@@ -73,4 +93,6 @@ pub trait Hittable: Sync + Send {
     fn hit(&self, ray: &Ray, ray_t: &Interval, hit_record: &mut HitRecord) -> bool {
         false
     }
+
+    fn bounding_box(&self) -> &Aabb;
 }

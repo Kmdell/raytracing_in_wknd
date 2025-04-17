@@ -2,6 +2,7 @@ use crate::{color::Color, hittable::HitRecord, ray::Ray, vec3::Vec3};
 
 use super::Material;
 
+#[derive(Clone)]
 pub struct Metal {
     albedo: Color,
     fuzz: f32,
