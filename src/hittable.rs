@@ -9,9 +9,12 @@ use crate::{
 };
 pub mod bvh_node;
 pub mod hittable_list;
+pub mod quad;
 pub mod sphere;
+
 use bvh_node::BvhNode;
-pub use sphere::Sphere;
+use quad::Quad;
+use sphere::Sphere;
 
 pub struct HitRecord {
     pub p: Point3,
@@ -27,6 +30,7 @@ pub struct HitRecord {
 pub enum HittableObject {
     Sphere(Sphere),
     BvhNode(BvhNode),
+    Quad(Quad),
 }
 
 impl HittableObject {
@@ -34,6 +38,7 @@ impl HittableObject {
         match self {
             HittableObject::Sphere(sphere) => sphere.hit(ray, ray_t, hit_record),
             HittableObject::BvhNode(bvh_node) => bvh_node.hit(ray, ray_t, hit_record),
+            HittableObject::Quad(quad) => quad.hit(ray, ray_t, hit_record),
         }
     }
 
@@ -41,6 +46,7 @@ impl HittableObject {
         match self {
             HittableObject::Sphere(sphere) => sphere.bounding_box(),
             HittableObject::BvhNode(bvh_node) => bvh_node.bounding_box(),
+            HittableObject::Quad(quad) => quad.bounding_box(),
         }
     }
 
@@ -59,6 +65,10 @@ impl HittableObject {
 
     pub fn bvh_node(objects: &mut [HittableObject]) -> HittableObject {
         HittableObject::BvhNode(BvhNode::new(objects))
+    }
+
+    pub fn quad(q: Point3, u: Vec3, v: Vec3, mat: MaterialType) -> HittableObject {
+        HittableObject::Quad(Quad::new(q, u, v, mat))
     }
 }
 
