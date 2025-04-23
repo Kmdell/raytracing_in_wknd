@@ -4,7 +4,7 @@ use crate::{
     aabb::Aabb,
     interval::Interval,
     material::MaterialType,
-    simd_vec3::{Point3, Vec3},
+    vec3::{Point3, Vec3},
 };
 
 use super::{HitRecord, Hittable};
@@ -13,31 +13,31 @@ const UNIT_INTERVAL: Interval = Interval { min: 0.0, max: 1.0 };
 
 #[derive(Clone)]
 pub struct Quad {
-    Q: Point3,
+    q: Point3,
     u: Vec3,
     v: Vec3,
     mat: Arc<MaterialType>,
     bbox: Aabb,
     normal: Vec3,
-    D: f32,
+    d: f32,
     w: Vec3,
 }
 
 impl Quad {
-    pub fn new(Q: Point3, u: Vec3, v: Vec3, mat: MaterialType) -> Quad {
+    pub fn new(q: Point3, u: Vec3, v: Vec3, mat: MaterialType) -> Quad {
         let n = u.cross(&v);
         let normal = n.unit_vector();
-        let D = normal.dot(&Q);
+        let d = normal.dot(&q);
         let w = n / n.dot(&n);
 
         let mut tmp = Self {
-            Q,
+            q,
             u,
             v,
             mat: Arc::new(mat),
             bbox: Aabb::default(),
             normal,
-            D,
+            d,
             w,
         };
 
@@ -48,8 +48,8 @@ impl Quad {
 
     fn set_bounding_box(&mut self) {
         // Compute the bounding box of all four vertices
-        let bbox_diagonal1 = Aabb::from_points(&self.Q, &(self.Q + self.u + self.v));
-        let bbox_diagonal2 = Aabb::from_points(&(self.Q + self.u), &(self.Q + self.v));
+        let bbox_diagonal1 = Aabb::from_points(&self.q, &(self.q + self.u + self.v));
+        let bbox_diagonal2 = Aabb::from_points(&(self.q + self.u), &(self.q + self.v));
         self.bbox = Aabb::from_aabbs(&bbox_diagonal1, &bbox_diagonal2);
     }
 
@@ -83,14 +83,14 @@ impl Hittable for Quad {
         }
 
         // Returns false if the hit point parameter t is outside the ray interval
-        let t = (self.D - self.normal.dot(ray.origin())) / denom;
+        let t = (self.d - self.normal.dot(ray.origin())) / denom;
         if !ray_t.contains(t) {
             return false;
         }
 
         // Determine f the hit point lies within the planar sphere using its plane coordinates.
         let intersection = ray.at(t);
-        let planar_hitpt_vector = intersection - self.Q;
+        let planar_hitpt_vector = intersection - self.q;
         let alpha = self.w.dot(&planar_hitpt_vector.cross(&self.v));
         let beta = self.w.dot(&self.u.cross(&planar_hitpt_vector));
 

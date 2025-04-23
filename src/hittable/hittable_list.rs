@@ -2,6 +2,7 @@ use crate::{aabb::Aabb, interval::Interval};
 
 use super::{HitRecord, Hittable, HittableObject};
 
+#[derive(Clone)]
 pub struct HittableList {
     pub objects: Vec<HittableObject>,
     bbox: Aabb,

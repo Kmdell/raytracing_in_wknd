@@ -12,18 +12,20 @@ mod texture;
 mod utility;
 
 #[cfg(feature = "simd")]
-pub mod simd_vec3;
+mod simd_vec3;
 #[cfg(feature = "simd")]
-pub use simd_vec3 as vec3;
+use simd_vec3 as vec3;
 #[cfg(not(feature = "simd"))]
 pub mod vec3;
 
 fn main() {
-    match 5 {
+    match 7 {
         2 => scenes::checkered_spheres(),
         3 => scenes::earth(),
         4 => scenes::perlin_spheres(),
         5 => scenes::quads(),
+        6 => scenes::simple_light(),
+        7 => scenes::cornell_box(),
         _ => scenes::bouncing_spheres(),
     }
 }

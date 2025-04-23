@@ -1,11 +1,12 @@
-use std::{fs::File, io::Write, sync::Arc};
+use std::{f32::INFINITY, fs::File, io::Write, sync::Arc};
 
 use indicatif::ParallelProgressIterator;
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
 use crate::{
     color::Color,
-    hittable::Hittable,
+    hittable::{HitRecord, Hittable},
+    interval::Interval,
     ray::Ray,
     utility::{degree_to_radians, random_float},
     vec3::{Point3, Vec3},
@@ -22,6 +23,8 @@ pub struct Camera {
     pub samples_per_pixel: u32,
     // Maximum numbers of ray bounces into scene
     pub max_depth: u32,
+    // Scene background color
+    pub background: Color,
 
     // Vertical view angle (field of view)
     pub vfov: f32,
@@ -90,7 +93,7 @@ impl Camera {
 
                     for _sample in 0..self.samples_per_pixel {
                         let ray = self.get_ray(i, *j);
-                        pixel_color += ray.color(self.max_depth, *world.as_ref());
+                        pixel_color += self.ray_color(&ray, self.max_depth, *world.as_ref());
                     }
                     bytes.extend_from_slice(
                         format!(
@@ -188,6 +191,33 @@ impl Camera {
         let p = Vec3::random_in_unit_disk();
         self.center + (p.x() * self.defocus_disk_u) + (p.y() * self.defocus_disk_v)
     }
+
+    fn ray_color(&self, r: &Ray, depth: u32, world: &impl Hittable) -> Color {
+        // If we hit the max ray bounce limit, no more light is gathered.
+        if depth <= 0 {
+            return Color::default();
+        }
+
+        let mut rec = HitRecord::default();
+
+        // If the ray hits nothing, it returns the background color.
+        if !world.hit(r, &Interval::new(0.001, INFINITY), &mut rec) {
+            return self.background;
+        }
+
+        let mut scattered = Ray::default();
+        let mut attenuation = Color::default();
+
+        let color_from_emission = rec.mat.emitted(rec.u, rec.v, &rec.p);
+
+        if !rec.mat.scatter(r, &rec, &mut attenuation, &mut scattered) {
+            return color_from_emission;
+        }
+
+        let color_from_scatter = attenuation * self.ray_color(&scattered, depth - 1, world);
+
+        color_from_scatter
+    }
 }
 
 impl Default for Camera {
@@ -197,6 +227,7 @@ impl Default for Camera {
             image_width: 100,
             samples_per_pixel: 10,
             max_depth: 10,
+            background: Color::default(),
             vfov: 90.0,
             look_from: Point3::default(),
             look_at: Point3::new(0.0, 0.0, -1.0),

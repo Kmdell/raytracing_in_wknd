@@ -7,14 +7,20 @@ use crate::{
     ray::Ray,
     vec3::{Point3, Vec3},
 };
+
 pub mod bvh_node;
 pub mod hittable_list;
 pub mod quad;
+pub mod rotate_y;
 pub mod sphere;
+pub mod translate;
 
 use bvh_node::BvhNode;
+use hittable_list::HittableList;
 use quad::Quad;
+use rotate_y::RotateY;
 use sphere::Sphere;
+use translate::Translate;
 
 pub struct HitRecord {
     pub p: Point3,
@@ -31,6 +37,9 @@ pub enum HittableObject {
     Sphere(Sphere),
     BvhNode(BvhNode),
     Quad(Quad),
+    HittableList(HittableList),
+    Translate(Translate),
+    RotateY(RotateY),
 }
 
 impl HittableObject {
@@ -39,6 +48,9 @@ impl HittableObject {
             HittableObject::Sphere(sphere) => sphere.hit(ray, ray_t, hit_record),
             HittableObject::BvhNode(bvh_node) => bvh_node.hit(ray, ray_t, hit_record),
             HittableObject::Quad(quad) => quad.hit(ray, ray_t, hit_record),
+            HittableObject::HittableList(list) => list.hit(ray, ray_t, hit_record),
+            HittableObject::Translate(translate) => translate.hit(ray, ray_t, hit_record),
+            HittableObject::RotateY(rot_y) => rot_y.hit(ray, ray_t, hit_record),
         }
     }
 
@@ -47,11 +59,85 @@ impl HittableObject {
             HittableObject::Sphere(sphere) => sphere.bounding_box(),
             HittableObject::BvhNode(bvh_node) => bvh_node.bounding_box(),
             HittableObject::Quad(quad) => quad.bounding_box(),
+            HittableObject::HittableList(list) => list.bounding_box(),
+            HittableObject::Translate(translate) => translate.bounding_box(),
+            HittableObject::RotateY(rot_y) => rot_y.bounding_box(),
         }
     }
 
     pub fn stationary_sphere(center: Point3, radius: f32, mat: MaterialType) -> HittableObject {
         HittableObject::Sphere(Sphere::new_stationary(center, radius, mat))
+    }
+
+    pub fn translate(object: HittableObject, offset: Vec3) -> HittableObject {
+        HittableObject::Translate(Translate::new(object, offset))
+    }
+
+    pub fn rotate_y(object: HittableObject, angle: f32) -> HittableObject {
+        HittableObject::RotateY(RotateY::new(object, angle))
+    }
+
+    pub fn new_box(a: Point3, b: Point3, mat: MaterialType) -> HittableObject {
+        // Returns the 3D box (six sides) that contains the two opposites vertices a & b.
+        let mut sides = HittableList::default();
+
+        // Construct the two opposite vertices with the minimum and maximum coordinates.
+        let min = Point3::new(a.x().min(b.x()), a.y().min(b.y()), a.z().min(b.z()));
+        let max = Point3::new(a.x().max(b.x()), a.y().max(b.y()), a.z().max(b.z()));
+
+        let dx = Vec3::new(max.x() - min.x(), 0.0, 0.0);
+        let dy = Vec3::new(0.0, max.y() - min.y(), 0.0);
+        let dz = Vec3::new(0.0, 0.0, max.z() - min.z());
+
+        // front
+        sides.add(HittableObject::quad(
+            Point3::new(min.x(), min.y(), max.z()),
+            dx,
+            dy,
+            mat.clone(),
+        ));
+
+        // right
+        sides.add(HittableObject::quad(
+            Point3::new(max.x(), min.y(), max.z()),
+            -dz,
+            dy,
+            mat.clone(),
+        ));
+
+        // back
+        sides.add(HittableObject::quad(
+            Point3::new(max.x(), min.y(), min.z()),
+            -dx,
+            dy,
+            mat.clone(),
+        ));
+
+        // left
+        sides.add(HittableObject::quad(
+            Point3::new(min.x(), min.y(), min.z()),
+            dz,
+            dy,
+            mat.clone(),
+        ));
+
+        // top
+        sides.add(HittableObject::quad(
+            Point3::new(min.x(), max.y(), max.z()),
+            dx,
+            -dz,
+            mat.clone(),
+        ));
+
+        // bottom
+        sides.add(HittableObject::quad(
+            Point3::new(min.x(), min.y(), min.z()),
+            dx,
+            dz,
+            mat,
+        ));
+
+        HittableObject::HittableList(sides)
     }
 
     pub fn moving_sphere(

@@ -1,6 +1,6 @@
 use crate::{
-    simd_vec3::{Point3, Vec3},
     utility::{random_float, random_uint_clamp},
+    vec3::{Point3, Vec3},
 };
 
 const POINT_COUNT: usize = 256;

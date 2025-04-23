@@ -1,4 +1,4 @@
-use crate::{color::Color, simd_vec3::Point3};
+use crate::{color::Color, vec3::Point3};
 
 mod checker;
 mod image;
@@ -23,6 +23,18 @@ pub enum TextureType {
     Checker(Checker),
     Image(Image),
     Noise(Noise),
+}
+
+impl From<Color> for TextureType {
+    fn from(value: Color) -> Self {
+        Self::solid_color(&value)
+    }
+}
+
+impl From<&Color> for TextureType {
+    fn from(value: &Color) -> Self {
+        Self::solid_color(value)
+    }
 }
 
 impl TextureType {

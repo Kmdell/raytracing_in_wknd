@@ -3,8 +3,8 @@ use crate::{
     color::Color,
     hittable::{hittable_list::HittableList, HittableObject},
     material::MaterialType,
-    simd_vec3::{Point3, Vec3},
     texture::TextureType,
+    vec3::{Point3, Vec3},
 };
 
 pub fn checkered_spheres() {
@@ -36,6 +36,7 @@ pub fn checkered_spheres() {
     cam.image_width = 400;
     cam.samples_per_pixel = 100;
     cam.max_depth = 50;
+    cam.background = Color::new(0.70, 0.80, 1.00);
 
     cam.vfov = 20.0;
     cam.look_from = Point3::new(13.0, 2.0, 13.0);

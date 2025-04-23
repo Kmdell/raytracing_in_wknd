@@ -1,10 +1,11 @@
 use crate::{
     camera::Camera,
+    color::Color,
     hittable::{hittable_list::HittableList, HittableObject},
     material::MaterialType,
-    simd_vec3::{Point3, Vec3},
     texture::TextureType,
     utility::{convert_to_linear, load_image},
+    vec3::{Point3, Vec3},
 };
 
 pub fn earth() {
@@ -23,6 +24,7 @@ pub fn earth() {
     cam.image_width = 1920;
     cam.samples_per_pixel = 500;
     cam.max_depth = 50;
+    cam.background = Color::new(0.70, 0.80, 1.00);
 
     cam.vfov = 20.0;
     cam.look_from = Point3::new(0.0, 0.0, 12.0);

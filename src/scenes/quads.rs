@@ -3,8 +3,8 @@ use crate::{
     color::Color,
     hittable::{hittable_list::HittableList, HittableObject},
     material::MaterialType,
-    simd_vec3::{Point3, Vec3},
     texture::TextureType,
+    vec3::{Point3, Vec3},
 };
 
 pub fn quads() {
@@ -56,6 +56,7 @@ pub fn quads() {
     camera.image_width = 1800;
     camera.samples_per_pixel = 100;
     camera.max_depth = 50;
+    camera.background = Color::new(0.70, 0.80, 1.00);
 
     camera.vfov = 80.0;
     camera.look_from = Point3::new(0.0, 0.0, 9.0);

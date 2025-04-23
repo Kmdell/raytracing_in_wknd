@@ -1,6 +1,6 @@
 use image::{DynamicImage, GenericImageView, Pixel, Rgb};
 
-use crate::{color::Color, interval::Interval, simd_vec3::Point3};
+use crate::{color::Color, interval::Interval, vec3::Point3};
 
 use super::Texture;
 

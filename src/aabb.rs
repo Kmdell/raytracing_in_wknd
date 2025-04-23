@@ -1,4 +1,6 @@
-use crate::{interval::Interval, ray::Ray, vec3::Point3};
+use std::ops::Add;
+
+use crate::{interval::Interval, ray::Ray, vec3::Point3, vec3::Vec3};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Aabb {
@@ -102,7 +104,7 @@ impl Aabb {
 
     fn pad_to_minimums(&mut self) {
         // Adjust the AABB so that no side is narrower than some delta, padding if necessary
-        let delta = 0.0001;
+        let delta = 0.001;
         if self.x.size() < delta {
             self.x = self.x.expands(delta)
         }
@@ -112,6 +114,34 @@ impl Aabb {
         if self.z.size() < delta {
             self.z = self.z.expands(delta)
         }
+    }
+}
+
+impl Add<&Vec3> for Aabb {
+    type Output = Aabb;
+    fn add(self, rhs: &Vec3) -> Self::Output {
+        Aabb::new(self.x + rhs.x(), self.y + rhs.y(), self.z + rhs.z())
+    }
+}
+
+impl Add<Vec3> for Aabb {
+    type Output = Aabb;
+    fn add(self, rhs: Vec3) -> Self::Output {
+        Aabb::new(self.x + rhs.x(), self.y + rhs.y(), self.z + rhs.z())
+    }
+}
+
+impl Add<Aabb> for Vec3 {
+    type Output = Aabb;
+    fn add(self, rhs: Aabb) -> Self::Output {
+        Aabb::new(self.x() + rhs.x, self.y() + rhs.y, self.z() + rhs.z)
+    }
+}
+
+impl Add<&Aabb> for Vec3 {
+    type Output = Aabb;
+    fn add(self, rhs: &Aabb) -> Self::Output {
+        Aabb::new(self.x() + rhs.x, self.y() + rhs.y, self.z() + rhs.z)
     }
 }
 

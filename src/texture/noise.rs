@@ -1,4 +1,4 @@
-use crate::{color::Color, perlin::Perlin, simd_vec3::Point3};
+use crate::{color::Color, perlin::Perlin, vec3::Point3};
 
 use super::Texture;
 

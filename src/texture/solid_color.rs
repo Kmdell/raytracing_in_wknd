@@ -1,4 +1,4 @@
-use crate::color::Color;
+use crate::{color::Color, vec3::Point3};
 
 use super::Texture;
 
@@ -15,7 +15,7 @@ impl SolidColor {
 }
 
 impl Texture for SolidColor {
-    fn value(&self, u: f32, v: f32, p: &crate::simd_vec3::Point3) -> Color {
+    fn value(&self, u: f32, v: f32, p: &Point3) -> Color {
         return self.albedo;
     }
 }
