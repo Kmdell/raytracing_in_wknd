@@ -1,8 +1,7 @@
 use std::{env::VarError, f32::consts::PI};
 
-use image::{DynamicImage, GenericImageView, ImageBuffer, ImageError, Pixel, Rgb};
+use image::{DynamicImage, ImageBuffer, ImageError, Rgb};
 use rand::random_range;
-use rayon::iter::{IntoParallelIterator, IntoParallelRefIterator};
 
 #[inline]
 pub fn degree_to_radians(degrees: f32) -> f32 {

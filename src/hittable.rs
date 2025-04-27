@@ -169,11 +169,7 @@ impl HittableObject {
         neg_inv_density: f32,
         texture: TextureType,
     ) -> HittableObject {
-        HittableObject::ConstantMedium(ConstantMedium::new_texture(
-            object,
-            neg_inv_density,
-            texture,
-        ))
+        HittableObject::ConstantMedium(ConstantMedium::new(object, neg_inv_density, texture))
     }
 
     pub fn constant_medium_color(
@@ -181,7 +177,7 @@ impl HittableObject {
         neg_inv_density: f32,
         albedo: &Color,
     ) -> HittableObject {
-        HittableObject::ConstantMedium(ConstantMedium::new_color(object, neg_inv_density, albedo))
+        HittableObject::ConstantMedium(ConstantMedium::new(object, neg_inv_density, albedo.into()))
     }
 }
 
@@ -213,7 +209,7 @@ impl Default for HitRecord {
 }
 
 pub trait Hittable: Sync + Send {
-    fn hit(&self, ray: &Ray, ray_t: &Interval, hit_record: &mut HitRecord) -> bool {
+    fn hit(&self, _ray: &Ray, _ray_t: &Interval, _hit_record: &mut HitRecord) -> bool {
         false
     }
 

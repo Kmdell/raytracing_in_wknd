@@ -1,7 +1,7 @@
 use std::{f32::INFINITY, sync::Arc};
 
 use crate::{
-    color::Color, interval::Interval, material::MaterialType, ray::Ray, texture::TextureType,
+    interval::Interval, material::MaterialType, ray::Ray, texture::TextureType,
     utility::random_float, vec3::Vec3,
 };
 
@@ -15,25 +15,12 @@ pub struct ConstantMedium {
 }
 
 impl ConstantMedium {
-    pub fn new_texture(
-        boundary: HittableObject,
-        neg_inv_density: f32,
-        texture: TextureType,
-    ) -> Self {
+    pub fn new(boundary: HittableObject, neg_inv_density: f32, texture: TextureType) -> Self {
         let neg_inv_density = -1.0 / neg_inv_density;
         ConstantMedium {
             boundary: Arc::new(boundary),
             neg_inv_density,
-            phase_function: Arc::new(MaterialType::isotropic_tex(texture)),
-        }
-    }
-
-    pub fn new_color(boundary: HittableObject, neg_inv_density: f32, albedo: &Color) -> Self {
-        let neg_inv_density = -1.0 / neg_inv_density;
-        Self {
-            boundary: Arc::new(boundary),
-            neg_inv_density,
-            phase_function: Arc::new(MaterialType::isotropic_color(&albedo)),
+            phase_function: Arc::new(MaterialType::isotropic(texture)),
         }
     }
 }

@@ -1,5 +1,5 @@
 use crate::{
-    camera::{self, Camera},
+    camera::Camera,
     color::Color,
     hittable::{hittable_list::HittableList, HittableObject},
     material::MaterialType,

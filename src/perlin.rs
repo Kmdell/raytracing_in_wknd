@@ -1,5 +1,5 @@
 use crate::{
-    utility::{random_float, random_uint_clamp},
+    utility::random_uint_clamp,
     vec3::{Point3, Vec3},
 };
 

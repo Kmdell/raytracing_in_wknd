@@ -3,9 +3,9 @@ use crate::{
     color::Color,
     hittable::{hittable_list::HittableList, HittableObject},
     material::MaterialType,
-    simd_vec3::{Point3, Vec3},
     texture::TextureType,
     utility::{convert_to_linear, load_image, random_float_clamp},
+    vec3::{Point3, Vec3},
 };
 
 pub fn final_scene(image_width: u32, samples_per_pixel: u32, max_depth: u32) {

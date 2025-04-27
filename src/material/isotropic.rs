@@ -8,13 +8,7 @@ pub struct Isotropic {
 }
 
 impl Isotropic {
-    pub fn new_color(albedo: &Color) -> Self {
-        Isotropic {
-            texture: TextureType::solid_color(&albedo),
-        }
-    }
-
-    pub fn new_texture(tex: TextureType) -> Self {
+    pub fn new(tex: TextureType) -> Self {
         Isotropic { texture: tex }
     }
 }

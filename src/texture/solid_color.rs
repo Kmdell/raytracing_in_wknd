@@ -7,15 +7,8 @@ pub struct SolidColor {
     albedo: Color,
 }
 
-impl SolidColor {
-    pub fn new(r: f32, g: f32, b: f32) -> Self {
-        let color = Color::new(r, g, b);
-        color.into()
-    }
-}
-
 impl Texture for SolidColor {
-    fn value(&self, u: f32, v: f32, p: &Point3) -> Color {
+    fn value(&self, _u: f32, _v: f32, _p: &Point3) -> Color {
         return self.albedo;
     }
 }

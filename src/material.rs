@@ -38,12 +38,8 @@ impl MaterialType {
         MaterialType::DiffuseLight(DiffuseLight::new(tex))
     }
 
-    pub fn isotropic_tex(tex: TextureType) -> MaterialType {
-        MaterialType::Isotropic(Isotropic::new_texture(tex))
-    }
-
-    pub fn isotropic_color(albedo: &Color) -> MaterialType {
-        MaterialType::Isotropic(Isotropic::new_color(&albedo))
+    pub fn isotropic(tex: TextureType) -> MaterialType {
+        MaterialType::Isotropic(Isotropic::new(tex))
     }
 
     pub fn scatter(
@@ -78,15 +74,15 @@ impl MaterialType {
 pub trait Material {
     fn scatter(
         &self,
-        ray_in: &Ray,
-        record: &HitRecord,
-        attenuation: &mut Color,
-        scattered: &mut Ray,
+        _ray_in: &Ray,
+        _record: &HitRecord,
+        _attenuation: &mut Color,
+        _scattered: &mut Ray,
     ) -> bool {
         false
     }
 
-    fn emitted(&self, u: f32, v: f32, p: &Point3) -> Color {
+    fn emitted(&self, _u: f32, _v: f32, _p: &Point3) -> Color {
         Color::default()
     }
 }

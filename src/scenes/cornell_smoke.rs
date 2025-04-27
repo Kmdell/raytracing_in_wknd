@@ -3,8 +3,7 @@ use crate::{
     color::Color,
     hittable::{hittable_list::HittableList, HittableObject},
     material::MaterialType,
-    simd_vec3::{Point3, Vec3},
-    texture::TextureType,
+    vec3::{Point3, Vec3},
 };
 
 pub fn cornell_smoke() {

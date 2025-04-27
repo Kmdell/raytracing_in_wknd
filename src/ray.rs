@@ -1,11 +1,4 @@
-use std::f32::INFINITY;
-
-use crate::{
-    color::Color,
-    hittable::{HitRecord, Hittable},
-    interval::Interval,
-    vec3::{Point3, Vec3},
-};
+use crate::vec3::{Point3, Vec3};
 
 #[derive(Debug, Clone)]
 pub struct Ray {
