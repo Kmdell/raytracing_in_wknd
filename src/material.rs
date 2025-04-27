@@ -1,11 +1,13 @@
 use dialectric::Dialectric;
 use diffuse_light::DiffuseLight;
+use isotropic::Isotropic;
 use lambertian::Lambertion;
 use metal::Metal;
 
 use crate::{color::Color, hittable::HitRecord, ray::Ray, texture::TextureType, vec3::Point3};
 pub mod dialectric;
 pub mod diffuse_light;
+pub mod isotropic;
 pub mod lambertian;
 pub mod metal;
 
@@ -16,6 +18,7 @@ pub enum MaterialType {
     Metal(Metal),
     Dialectric(Dialectric),
     DiffuseLight(DiffuseLight),
+    Isotropic(Isotropic),
 }
 
 impl MaterialType {
@@ -35,6 +38,14 @@ impl MaterialType {
         MaterialType::DiffuseLight(DiffuseLight::new(tex))
     }
 
+    pub fn isotropic_tex(tex: TextureType) -> MaterialType {
+        MaterialType::Isotropic(Isotropic::new_texture(tex))
+    }
+
+    pub fn isotropic_color(albedo: &Color) -> MaterialType {
+        MaterialType::Isotropic(Isotropic::new_color(&albedo))
+    }
+
     pub fn scatter(
         &self,
         ray_in: &Ray,
@@ -47,6 +58,7 @@ impl MaterialType {
             MaterialType::Metal(mat) => mat.scatter(ray_in, record, attenuation, scattered),
             MaterialType::Dialectric(mat) => mat.scatter(ray_in, record, attenuation, scattered),
             MaterialType::DiffuseLight(mat) => mat.scatter(ray_in, record, attenuation, scattered),
+            MaterialType::Isotropic(mat) => mat.scatter(ray_in, record, attenuation, scattered),
             MaterialType::None => false,
         }
     }
@@ -57,6 +69,7 @@ impl MaterialType {
             MaterialType::Metal(mat) => mat.emitted(u, v, p),
             MaterialType::Dialectric(mat) => mat.emitted(u, v, p),
             MaterialType::DiffuseLight(mat) => mat.emitted(u, v, p),
+            MaterialType::Isotropic(mat) => mat.emitted(u, v, p),
             MaterialType::None => Color::default(),
         }
     }

@@ -19,13 +19,16 @@ use simd_vec3 as vec3;
 pub mod vec3;
 
 fn main() {
-    match 7 {
+    match 9 {
+        1 => scenes::bouncing_spheres(),
         2 => scenes::checkered_spheres(),
         3 => scenes::earth(),
         4 => scenes::perlin_spheres(),
         5 => scenes::quads(),
         6 => scenes::simple_light(),
         7 => scenes::cornell_box(),
-        _ => scenes::bouncing_spheres(),
+        8 => scenes::cornell_smoke(),
+        9 => scenes::final_scene(800, 10000, 40),
+        _ => scenes::final_scene(400, 250, 4),
     }
 }

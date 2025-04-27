@@ -32,9 +32,9 @@ impl Texture for Image {
             i = width - 1;
         }
 
-        let j = (v * height as f32) as u32;
+        let mut j = (v * height as f32) as u32;
         if j >= height {
-            i = height - 1;
+            j = height - 1;
         }
 
         let Rgb([r, g, b]) = self.img.get_pixel(i, j).to_rgb();

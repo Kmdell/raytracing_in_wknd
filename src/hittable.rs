@@ -2,13 +2,16 @@ use std::sync::Arc;
 
 use crate::{
     aabb::Aabb,
+    color::Color,
     interval::Interval,
     material::MaterialType,
     ray::Ray,
+    texture::TextureType,
     vec3::{Point3, Vec3},
 };
 
 pub mod bvh_node;
+pub mod constant_medium;
 pub mod hittable_list;
 pub mod quad;
 pub mod rotate_y;
@@ -16,6 +19,7 @@ pub mod sphere;
 pub mod translate;
 
 use bvh_node::BvhNode;
+use constant_medium::ConstantMedium;
 use hittable_list::HittableList;
 use quad::Quad;
 use rotate_y::RotateY;
@@ -40,6 +44,7 @@ pub enum HittableObject {
     HittableList(HittableList),
     Translate(Translate),
     RotateY(RotateY),
+    ConstantMedium(ConstantMedium),
 }
 
 impl HittableObject {
@@ -51,6 +56,7 @@ impl HittableObject {
             HittableObject::HittableList(list) => list.hit(ray, ray_t, hit_record),
             HittableObject::Translate(translate) => translate.hit(ray, ray_t, hit_record),
             HittableObject::RotateY(rot_y) => rot_y.hit(ray, ray_t, hit_record),
+            HittableObject::ConstantMedium(cm) => cm.hit(ray, ray_t, hit_record),
         }
     }
 
@@ -62,6 +68,7 @@ impl HittableObject {
             HittableObject::HittableList(list) => list.bounding_box(),
             HittableObject::Translate(translate) => translate.bounding_box(),
             HittableObject::RotateY(rot_y) => rot_y.bounding_box(),
+            HittableObject::ConstantMedium(cm) => cm.bounding_box(),
         }
     }
 
@@ -155,6 +162,26 @@ impl HittableObject {
 
     pub fn quad(q: Point3, u: Vec3, v: Vec3, mat: MaterialType) -> HittableObject {
         HittableObject::Quad(Quad::new(q, u, v, mat))
+    }
+
+    pub fn constant_medium_tex(
+        object: HittableObject,
+        neg_inv_density: f32,
+        texture: TextureType,
+    ) -> HittableObject {
+        HittableObject::ConstantMedium(ConstantMedium::new_texture(
+            object,
+            neg_inv_density,
+            texture,
+        ))
+    }
+
+    pub fn constant_medium_color(
+        object: HittableObject,
+        neg_inv_density: f32,
+        albedo: &Color,
+    ) -> HittableObject {
+        HittableObject::ConstantMedium(ConstantMedium::new_color(object, neg_inv_density, albedo))
     }
 }
 
